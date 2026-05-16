@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Focus & Energy Tracker</title>
+    <title>Analytics Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg: #0a0a0c;
-            --card-bg: #131316;
+            --bg: #09090b;
+            --card-bg: #141417;
             --accent: #38bdf8;
-            --text: #f4f4f5;
-            --text-muted: #71717a;
+            --accent-dim: rgba(56, 189, 248, 0.1);
+            --text: #fafafa;
+            --text-muted: #a1a1aa;
             --border: #27272a;
         }
 
@@ -18,49 +20,70 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg);
             color: var(--text);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
             margin: 0;
             padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            width: 100%;
+            max-width: 900px;
+            margin-top: 40px;
+        }
+
+        @media (min-columns: 768px) or (min-width: 768px) {
+            .dashboard {
+                grid-template-columns: 350px 1fr;
+            }
         }
 
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 32px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 28px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
-        h1 {
-            font-size: 1.5rem;
-            margin-top: 0;
+        h1, h2 {
+            margin: 0;
             font-weight: 600;
-            letter-spacing: -0.025em;
+            letter-spacing: -0.03em;
         }
 
-        p {
+        h1 { font-size: 1.4rem; }
+        h2 { font-size: 1.2rem; }
+
+        .subtitle {
             color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-bottom: 24px;
-        }
-
-        .metric {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
             font-size: 0.85rem;
+            margin-top: -12px;
+        }
+
+        .metric-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .metric-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            margin-bottom: 8px;
             color: var(--text-muted);
         }
+
+        .metric-label span h4 { margin: 0; color: var(--accent); }
 
         .slider {
             -webkit-appearance: none;
@@ -73,78 +96,169 @@
 
         .slider::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
             background: var(--accent);
             cursor: pointer;
-            transition: transform 0.1s ease;
         }
 
-        .slider::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
+        /* Tag Selection System */
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
-        .val-display {
-            float: right;
-            font-weight: bold;
+        .tag-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tag-btn.active {
+            background-color: var(--accent-dim);
+            border-color: var(--accent);
             color: var(--accent);
         }
 
-        .btn {
+        .btn-primary {
             background-color: var(--text);
             color: var(--bg);
             border: none;
-            width: 100%;
             padding: 12px;
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
             transition: opacity 0.2s;
-            margin-top: 12px;
         }
 
-        .btn:hover {
-            opacity: 0.9;
+        .btn-primary:hover { opacity: 0.9; }
+
+        /* Stats grid inside analytics panel */
+        .stats-summary {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
 
-        .logs {
-            margin-top: 24px;
-            border-top: 1px solid var(--border);
-            padding-top: 20px;
-            max-height: 150px;
+        .stat-box {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .stat-box div {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin-top: 4px;
+        }
+
+        .stat-box span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            height: 220px;
+        }
+
+        .history-list {
+            max-height: 160px;
             overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        .log-item {
+        .history-item {
             font-size: 0.85rem;
-            padding: 6px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.02);
+            padding: 10px;
+            background: rgba(255,255,255,0.01);
+            border: 1px solid var(--border);
+            border-radius: 8px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
+        }
+
+        .clear-btn {
+            background: none;
+            border: none;
+            color: #ef4444;
+            font-size: 0.75rem;
+            cursor: pointer;
+            padding: 0;
+            text-align: right;
+            align-self: flex-end;
         }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h1>State Check-In</h1>
-        <p>Log your current focus and physical energy levels.</p>
+    <div class="dashboard">
+        <div class="card">
+            <div>
+                <h1>State Check-In</h1>
+                <div class="subtitle">Quantify your internal metrics</div>
+            </div>
 
-        <div class="metric">
-            <label>Focus Level <span id="focusVal" class="val-display">5</span></label>
-            <input type="range" min="1" max="10" value="5" class="slider" id="focusSlider">
+            <div class="metric-group">
+                <div class="metric-label">Focus Level <span id="focusVal">5/10</span></div>
+                <input type="range" min="1" max="10" value="5" class="slider" id="focusSlider">
+            </div>
+
+            <div class="metric-group">
+                <div class="metric-label">Energy Level <span id="energyVal">5/10</span></div>
+                <input type="range" min="1" max="10" value="5" class="slider" id="energySlider">
+            </div>
+
+            <div class="metric-group">
+                <div class="metric-label">Activity Context</div>
+                <div class="tags-container" id="tagsContainer">
+                    <button class="tag-btn active" data-tag="Code">💻 Code</button>
+                    <button class="tag-btn" data-tag="Train">⚡ Train</button>
+                    <button class="tag-btn" data-tag="Class">📚 Class</button>
+                    <button class="tag-btn" data-tag="Rest">☕ Rest</button>
+                </div>
+            </div>
+
+            <button class="btn-primary" id="logBtn">Log Data Entry</button>
         </div>
 
-        <div class="metric">
-            <label>Energy Level <span id="energyVal" class="val-display">5</span></label>
-            <input type="range" min="1" max="10" value="5" class="slider" id="energySlider">
-        </div>
+        <div class="card">
+            <h2>Performance Trends</h2>
+            
+            <div class="stats-summary">
+                <div class="stat-box">
+                    <span>Avg Focus</span>
+                    <div id="avgFocus">0.0</div>
+                </div>
+                <div class="stat-box">
+                    <span>Avg Energy</span>
+                    <div id="avgEnergy">0.0</div>
+                </div>
+            </div>
 
-        <button class="btn" id="logBtn">Save Session</button>
+            <div class="chart-wrapper">
+                <canvas id="analyticsChart"></canvas>
+            </div>
 
-        <div class="logs" id="logsContainer">
-            <!-- Saved logs go here -->
+            <div class="history-list" id="historyList">
+                </div>
+            
+            <button class="clear-btn" id="clearBtn">Clear Dataset</button>
         </div>
     </div>
 
