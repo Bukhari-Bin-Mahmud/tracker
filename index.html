@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus & Energy Tracker</title>
+    <style>
+        :root {
+            --bg: #0a0a0c;
+            --card-bg: #131316;
+            --accent: #38bdf8;
+            --text: #f4f4f5;
+            --text-muted: #71717a;
+            --border: #27272a;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-top: 0;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+        }
+
+        p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+
+        .metric {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border);
+            outline: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .val-display {
+            float: right;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .btn {
+            background-color: var(--text);
+            color: var(--bg);
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            margin-top: 12px;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .logs {
+            margin-top: 24px;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .log-item {
+            font-size: 0.85rem;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>State Check-In</h1>
+        <p>Log your current focus and physical energy levels.</p>
+
+        <div class="metric">
+            <label>Focus Level <span id="focusVal" class="val-display">5</span></label>
+            <input type="range" min="1" max="10" value="5" class="slider" id="focusSlider">
+        </div>
+
+        <div class="metric">
+            <label>Energy Level <span id="energyVal" class="val-display">5</span></label>
+            <input type="range" min="1" max="10" value="5" class="slider" id="energySlider">
+        </div>
+
+        <button class="btn" id="logBtn">Save Session</button>
+
+        <div class="logs" id="logsContainer">
+            <!-- Saved logs go here -->
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
