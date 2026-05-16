@@ -1,1 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APEX // Core Engine</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
 
+    <header>
+        <div class="brand">
+            <span class="logo-sym">//</span>
+            <h1>APEX PERFORMANCE SYSTEM</h1>
+        </div>
+        <div class="telemetry-badge">
+            <span class="pulse-indicator"></span> MODULE_SYS_ACTIVE
+        </div>
+    </header>
+
+    <main class="grid-container">
+        <section class="panel-control">
+            <div class="panel-header">
+                <h2>Telemetry Input</h2>
+                <p>Quantify active biometric and cognitive baselines.</p>
+            </div>
+
+            <div class="input-rack">
+                <div class="input-block">
+                    <div class="input-label">Cognitive Focus <span id="focusVal">5</span></div>
+                    <input type="range" min="1" max="10" value="5" class="range-slider slider-cyan" id="focusSlider">
+                </div>
+
+                <div class="input-block">
+                    <div class="input-label">CNS Readiness <span id="energyVal">5</span></div>
+                    <input type="range" min="1" max="10" value="5" class="range-slider slider-purple" id="energySlider">
+                </div>
+            </div>
+
+            <div class="context-rack">
+                <label class="section-label">Context Allocation</label>
+                <div class="matrix-grid" id="contextMatrix">
+                    <button class="matrix-node active" data-context="Dev">💻 Architecture / Dev</button>
+                    <button class="matrix-node" data-context="Strain">⚡ Kinetic Strain</button>
+                    <button class="matrix-node" data-context="Acquisition">📚 Core Acquisition</button>
+                    <button class="matrix-node" data-context="Regen">☕ Strategic Regen</button>
+                </div>
+            </div>
+
+            <div class="chrono-card">
+                <div class="chrono-meta">
+                    <span class="section-label">Session Chrono</span>
+                    <span class="chrono-state" id="chronoState">STAGED</span>
+                </div>
+                <div class="chrono-display" id="chronoDisplay">25:00</div>
+                <button class="btn-secondary" id="btnChrono">INITIALIZE BLOCK</button>
+            </div>
+
+            <button class="btn-primary" id="btnCommit">Commit Telemetry Node</button>
+        </section>
+
+        <section class="dashboard-analytics">
+            <div class="stats-grid">
+                <div class="kpi-card">
+                    <span class="kpi-label">Flow State Index</span>
+                    <span class="kpi-value color-cyan" id="kpiFlow">0.0</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-label">State Correlation (r)</span>
+                    <span class="kpi-value" id="kpiCorrelation">0.00</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-label">Mean Focus</span>
+                    <span class="kpi-value" id="kpiMeanFocus">0.0</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-label">Mean Readiness</span>
+                    <span class="kpi-value" id="kpiMeanEnergy">0.0</span>
+                </div>
+            </div>
+
+            <div class="panel-view insight-panel">
+                <div class="panel-header"><h2>Psychological Intelligence Report</h2></div>
+                <div class="insight-content" id="insightTerminal">System cold start. Input telemetry signatures to compile performance analytics mapping.</div>
+            </div>
+
+            <div class="panel-view">
+                <div class="panel-header"><h2>Dynamic Vector Analysis</h2></div>
+                <div class="chart-wrapper">
+                    <canvas id="canvasApex"></canvas>
+                </div>
+            </div>
+
+            <div class="panel-view">
+                <div class="panel-header table-header">
+                    <h2>Historical Dataset Ledger</h2>
+                    <div class="data-actions">
+                        <button class="action-link text-cyan" id="btnExport">DATA.EXPORT</button>
+                        <label for="fileImport" class="action-link text-purple" style="cursor:pointer;">DATA.IMPORT</label>
+                        <input type="file" id="fileImport" accept=".json" style="display:none;">
+                        <button class="action-link text-rose" id="btnPurge">DATA.PURGE</button>
+                    </div>
+                </div>
+                <div class="ledger-scroll">
+                    <table class="ledger-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Allocation Context</th>
+                                <th>Focus</th>
+                                <th>CNS Read</th>
+                                <th>Index Vector</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ledgerBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
